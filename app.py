@@ -1,25 +1,38 @@
+import sys
+import warnings
 from datetime import datetime as dt
 from datetime import timedelta
 
 import torch
 from flask import Flask, request
 from flask_restx import Api, Resource
-from model import PathPredictor
+from path_predictor import PathPredictor
 from utils import *
 
 app = Flask(__name__)
 api = Api(app)
+import os
 
-model = torch.jit.load("./checkpoints/path_20230425_02164230_4096 0.001.pth", map_location=torch.device('cpu'))
+import path_predictor
+from serverless_wsgi import handle_request
+
+# 사용자 정의 클래스를 찾을 수 있는 곳으로 sys.modules을 업데이트합니다.
+model = PathPredictor()
+model.load_state_dict(torch.load("./checkpoints/state_dict.pth", map_location=torch.device('cpu')))
+model.eval()
+
+# model.load_state_dict(checkpoint['model_state_dict'])
 # 자기소개서 요약 API
-@api.route("/hello")
+@api.route("/api")
 class Hello(Resource):
     def get(self):
-        return {"content": "안녕하세용"}, 200
+        print("연결테스트")
+        return {"content": "성공"}, 200
 
 @api.route("/api/predict")
 class Predictor(Resource):
     def post(self):
+        print("예측 시작")
         try:
             query_hour = float(request.json["query_hour"])
         except Exception:
@@ -65,5 +78,4 @@ class Predictor(Resource):
         }, 200
 
 def handler(event, context):
-    from serverless_wsgi import handle_request  # serverless-wsgi 모듈을 핸들러 함수 내에서 임포트합니다.
     return handle_request(app, event, context)

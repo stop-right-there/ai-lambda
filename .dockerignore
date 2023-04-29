@@ -1,0 +1,7 @@
+__pycache__/
+.git/
+.serverless/
+.gitignore
+.dockerignore
+serverless.yml
+venv/

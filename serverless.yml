@@ -1,0 +1,23 @@
+service: ai-lambda
+
+provider:
+    name: aws
+    runtime: python3.9
+    architecture: arm64
+    region: ap-northeast-2
+    memorySize: 3008
+    timeout: 100
+
+functions:
+    app:
+        image: 528202081526.dkr.ecr.ap-northeast-2.amazonaws.com/ai-lambda:latest
+        events:
+            - http:
+                  path: /
+                  method: any
+            - http:
+                  path: /api/{proxy+}
+                  method: any
+            - http:
+                  path: /{proxy+}
+                  method: any

@@ -1,10 +1,11 @@
+from datetime import datetime
+
 import torch
-from torch import nn
 import torch.nn.functional as F
 from dataset import loadData
-from utils import *
 from sklearn.preprocessing import StandardScaler
-from datetime import datetime
+from torch import nn
+from utils import *
 
 device = "cpu"
 
@@ -152,9 +153,7 @@ class PathPredictor(nn.Module):
                 print("Epoch:" , epoch, "cost:", avg_cost.item())
         print("Training Complete!")
         if save_model:
-            model_path = "./checkpoints/path_" + datetime.now().strftime("%Y%m%d_%H%M%S") + str(training_epochs)+"_"+ str(batch_size) + " " + str(learning_rate) +".pth"
-            torch.save(self, model_path)
-            print("Saved model at", model_path)
+            torch.save(model, "./checkpoints/checkpoint.pth", map_location=torch.device('cpu'))
         
     def predict(self, x, target_hour=None):
         x[:, 0] = self.scaler.transform(x[:, 0])
@@ -169,8 +168,7 @@ class PathPredictor(nn.Module):
         with torch.no_grad():
             prediction = self.forward(X, target_hour)
         return prediction.to("cpu")
-
-
+    
 if __name__ == "__main__":
     x_train, y_train, x_test, y_test = loadData(path_data=True, augment=1)
     
