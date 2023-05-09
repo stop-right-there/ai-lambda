@@ -1,9 +1,13 @@
-import torch
-import numpy as np
-import torch.backends.cudnn as cudnn
-import os, random
-from math import sin, cos, sqrt, atan2, radians
+import os
+import random
 from datetime import datetime as dt
+from math import atan2, cos, radians, sin, sqrt
+
+import numpy as np
+import torch
+import torch.backends.cudnn as cudnn
+
+
 def setRandomSeed(seed):
     generator = torch.Generator()
     os.environ['PYTHONHASHSEED'] = str(seed)
@@ -58,23 +62,35 @@ def parseJSON(JSON, bef_hour=None):
     x[4] = float(JSON["central_latitude"])  # lat
     x[5] = float(JSON["central_longitude"])  #lon
     if bef_hour is None:
-        x[6] = 0    # observation time interval
+        x[6] = 0.  # observation time interval
     else:
         interval = x[2] - int(bef_hour)
         if interval < 0: interval += 24
         x[6] = interval
     era5 = JSON["around_weathers"]
-    coord_mapper = {315: 0, 0: 10, 45: 20, 270: 30, 90: 50, 225: 60, 180: 70, 135: 80}
+    # coord_mapper = {315: 0, 0: 10, 45: 20, 270: 30, 90: 50, 225: 60, 180: 70, 135: 80}
+    coord_mapper = {10:0, 0:10, 1:20, 9:30, 3:50, 7:60, 6:70, 4:80}
+
     for d in era5:
         point = int(d["point"])
-        if point == 0:
+        distance = int(d["distance"])
+        if distance == 0 and point == 0:
             idx = 40
+        elif distance == 750:
+            if point == 0:
+                idx = 10
+            else:
+                # idx = coord_mapper[(point-1)*45]
+                try:
+                    idx = coord_mapper[point]
+                except KeyError:
+                    continue
         else:
-            idx = coord_mapper[(point-1)*45]
+            continue
         idx += 7
         cols = ["temperature_2m", "relativehumidity_2m", "pressure_msl", "cloudcover", "direct_normal_irradiance",
                 "windspeed_10m", "windspeed_100m", "winddirection_10m", "winddirection_100m", "windgusts_10m"]
         for i in range(len(cols)):
-            x[idx+i] = d[cols[i]]
+            x[idx+i] = float(d[cols[i]])
 
     return np.expand_dims(x, axis=0)

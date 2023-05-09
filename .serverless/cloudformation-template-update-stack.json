@@ -159,7 +159,7 @@
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
-          "ImageUri": "528202081526.dkr.ecr.ap-northeast-2.amazonaws.com/ai-lambda@sha256:3e78ef9b87c0c459e87d9ebd77c057164c7c787e8032faf9288db57417495364"
+          "ImageUri": "528202081526.dkr.ecr.ap-northeast-2.amazonaws.com/ai-lambda@sha256:6cd370160bfb796fb390241eb87a17542c8069532ea1c0983114397ce4ea1f60"
         },
         "PackageType": "Image",
         "FunctionName": "ai-lambda-dev-app",
@@ -179,14 +179,14 @@
         "AppLogGroup"
       ]
     },
-    "AppLambdaVersion7vly3JsrP3xvdhP0XeLeMzUEdT7sRkqgiJ6BCbIIg": {
+    "AppLambdaVersionivUavJuLIksfgDcORrXqwLtqXtLBeU7XIwAEBevItE": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "AppLambdaFunction"
         },
-        "CodeSha256": "3e78ef9b87c0c459e87d9ebd77c057164c7c787e8032faf9288db57417495364"
+        "CodeSha256": "6cd370160bfb796fb390241eb87a17542c8069532ea1c0983114397ce4ea1f60"
       }
     },
     "ApiGatewayRestApi": {
@@ -384,7 +384,7 @@
         "AppLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1682726525448": {
+    "ApiGatewayDeployment1683556212159": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -448,7 +448,7 @@
     "AppLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "AppLambdaVersion7vly3JsrP3xvdhP0XeLeMzUEdT7sRkqgiJ6BCbIIg"
+        "Ref": "AppLambdaVersionivUavJuLIksfgDcORrXqwLtqXtLBeU7XIwAEBevItE"
       },
       "Export": {
         "Name": "sls-ai-lambda-dev-AppLambdaFunctionQualifiedArn"
